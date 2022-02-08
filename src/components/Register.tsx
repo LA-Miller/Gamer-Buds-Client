@@ -47,41 +47,62 @@ class Register extends React.Component<
 
     this.validate();
 
-    if(this.state.emailErr === true || this.state.pwdError === true || this.state.usernameErr === true) {
-        fetch("https://lam-gamer-buds-server.herokuapp.com/user/register", {
-      method: "POST",
-      body: JSON.stringify({
-        user: {
-          username: this.state.username,
-          email: this.state.email,
-          password: this.state.password,
-          isAdmin: this.state.isAdmin,
-        },
-      }),
-      headers: new Headers({
-        "Content-Type": "application/json",
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("data:", data);
-        this.props.updateToken(data.sessionToken);
+    if (
+      this.state.emailErr === true ||
+      this.state.pwdError === true ||
+      this.state.usernameErr === true
+    ) {
+      fetch("https://lam-gamer-buds-server.herokuapp.com/user/register", {
+        method: "POST",
+        body: JSON.stringify({
+          user: {
+            username: this.state.username,
+            email: this.state.email,
+            password: this.state.password,
+            isAdmin: this.state.isAdmin,
+          },
+        }),
+        headers: new Headers({
+          "Content-Type": "application/json",
+        }),
       })
-    .catch((error) => console.log("Error:", error));
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("data:", data);
+          this.props.updateToken(data.sessionToken);
+        })
+        .catch((error) => console.log("Error:", error));
     } else {
-        console.log("It worked");
-    }     
+      console.log("It worked");
+    }
   };
 
   validate = () => {
-    if (validEmail.test(this.state.email)) {
+    if (!validEmail.test(this.state.email)) {
       this.setState({
         emailErr: true,
       });
+    } else {
+      this.setState({
+        emailErr: false,
+      });
     }
-    if (validPassword.test(this.state.password)) {
+    if (!validPassword.test(this.state.password)) {
       this.setState({
         pwdError: true,
+      });
+    } else {
+      this.setState({
+        pwdError: false,
+      });
+    }
+    if (this.state.username.length <= 3) {
+      this.setState({
+        usernameErr: true,
+      });
+    } else {
+      this.setState({
+        usernameErr: false,
       });
     }
   };
@@ -103,6 +124,7 @@ class Register extends React.Component<
               required={true}
             />
           </FormGroup>
+          {this.state.emailErr && <p>Your email is invalid</p>}
           <FormGroup>
             <Label id="username-label" htmlFor="username">
               Username
@@ -115,6 +137,7 @@ class Register extends React.Component<
               required={true}
             />
           </FormGroup>
+          {this.state.usernameErr && <p>Username must be greater than 3 characters</p>}
           <FormGroup>
             <Label id="password-label" htmlFor="password">
               Password
@@ -127,9 +150,10 @@ class Register extends React.Component<
               required={true}
             />
           </FormGroup>
+          {this.state.pwdError && <p>Your password is invalid</p>}
           <Button id="register-btn" type="submit">
             Register
-          </Button>    
+          </Button>
         </Form>
       </div>
     );
