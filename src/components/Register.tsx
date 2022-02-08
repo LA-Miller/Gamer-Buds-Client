@@ -1,6 +1,7 @@
 import React from "react";
 import { Form, FormGroup, Label, Input, Button } from "reactstrap";
 import { AppState } from "../App";
+import { validEmail, validPassword } from "./Regex";
 
 export type RegisterProps = {
   sessionToken: AppState["sessionToken"];
@@ -14,6 +15,9 @@ class Register extends React.Component<
     username: string;
     password: string;
     isAdmin: boolean;
+    emailErr: boolean;
+    pwdError: boolean;
+    usernameErr: boolean;
   }
 > {
   constructor(props: RegisterProps) {
@@ -24,6 +28,9 @@ class Register extends React.Component<
       username: "",
       password: "",
       isAdmin: false,
+      emailErr: false,
+      pwdError: false,
+      usernameErr: false,
     };
   }
 
@@ -38,7 +45,10 @@ class Register extends React.Component<
   registerUser = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    fetch("https://lam-gamer-buds-server.herokuapp.com/user/register", {
+    this.validate();
+
+    if(this.state.emailErr === true || this.state.pwdError === true || this.state.usernameErr === true) {
+        fetch("https://lam-gamer-buds-server.herokuapp.com/user/register", {
       method: "POST",
       body: JSON.stringify({
         user: {
@@ -57,7 +67,23 @@ class Register extends React.Component<
         console.log("data:", data);
         this.props.updateToken(data.sessionToken);
       })
-      .catch((error) => console.log("Error:", error));
+    .catch((error) => console.log("Error:", error));
+    } else {
+        console.log("It worked");
+    }     
+  };
+
+  validate = () => {
+    if (validEmail.test(this.state.email)) {
+      this.setState({
+        emailErr: true,
+      });
+    }
+    if (validPassword.test(this.state.password)) {
+      this.setState({
+        pwdError: true,
+      });
+    }
   };
 
   render(): React.ReactNode {
@@ -103,7 +129,7 @@ class Register extends React.Component<
           </FormGroup>
           <Button id="register-btn" type="submit">
             Register
-          </Button>
+          </Button>    
         </Form>
       </div>
     );
