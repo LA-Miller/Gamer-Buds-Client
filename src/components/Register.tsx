@@ -2,6 +2,7 @@ import React from "react";
 import { Form, FormGroup, Label, Input, Button } from "reactstrap";
 import { AppState } from "../App";
 import { validEmail, validPassword } from "./Regex";
+import { useEffect } from "react";
 
 export type RegisterProps = {
   sessionToken: AppState["sessionToken"];
@@ -21,6 +22,7 @@ class Register extends React.Component<
     adminPwd: string;
     adminErrMsg: string;
     isAdminFieldVisible: boolean;
+    isAdminFieldValid: boolean | null;
   }
 > {
   constructor(props: RegisterProps) {
@@ -37,6 +39,7 @@ class Register extends React.Component<
       adminPwd: "",
       adminErrMsg: "",
       isAdminFieldVisible: false,
+      isAdminFieldValid: null,
     };
   }
 
@@ -52,13 +55,15 @@ class Register extends React.Component<
     e.preventDefault();
 
     this.validate();
+    this.AdminPasswordValidation();
+    
+    console.log(this.state.isAdminFieldValid);
 
     if (
-      ( this.state.emailErr === false &&
-        this.state.pwdError === false &&
-        this.state.usernameErr === false &&
-        this.AdminPasswordValidation() === true ||
-        this.AdminPasswordValidation() === null)
+      this.state.emailErr === false &&
+      this.state.pwdError === false &&
+      this.state.usernameErr === false &&
+      (this.state.isAdminFieldValid === true || this.state.isAdminFieldValid === null)
     ) {
       fetch("https://lam-gamer-buds-server.herokuapp.com/user/register", {
         method: "POST",
@@ -88,16 +93,23 @@ class Register extends React.Component<
   AdminPasswordValidation = () => {
     if (this.state.adminPwd.length === 0) {
       console.log("Admin password is empty. Registering as standard user.");
-      return null;
+      this.setState({
+        isAdminFieldValid: true,
+      })
+      return false;
     } else if (this.state.adminPwd != process.env.REACT_APP_ADMIN_KEY) {
       console.log("Incorrect admin password! Try again or leave blank.");
       this.setState({
         adminErrMsg:
           "Incorrect admin password. Try again or leave this field blank if you wish to register as a standard user.",
+        isAdminFieldValid: false,
       });
       return false;
     } else if (this.state.adminPwd === process.env.REACT_APP_ADMIN_KEY) {
       console.log("Correct admin password");
+      this.setState({
+        isAdminFieldValid: true,
+      });
       return true;
     }
   };
@@ -214,10 +226,10 @@ class Register extends React.Component<
                   Admin Authorization Code
                 </Label>
                 <Input
+                  onChange={this.handleChange}
                   id="adminPwd-Input"
                   name="adminPwd"
                   type="password"
-                  onChange={this.handleChange}
                   value={this.state.adminPwd}
                 />
               </div>
