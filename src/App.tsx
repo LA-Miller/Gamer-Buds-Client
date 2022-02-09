@@ -5,6 +5,7 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import NavbarComponent from "./components/Navbar";
+import PostCreate from "./components/PostCreate";
 
 export type AppState = {
   isLoggedIn: boolean,
@@ -68,6 +69,15 @@ const App: React.FunctionComponent = () => {
             sessionToken={sessionToken}
             updateToken={updateToken}
           ></Register>
+        }/>
+      </Routes>
+
+      <Routes>
+        <Route path='/create' element={
+          <PostCreate
+            sessionToken={sessionToken}
+            updateToken={updateToken}
+          ></PostCreate>
         }/>
       </Routes>
     </Router>

@@ -48,6 +48,7 @@ class Register extends React.Component<
       ...this.state,
       [e.target.name]: e.target.value,
     });
+    console.log(process.env.REACT_APP_ADMIN_KEY)
   };
 
   //  POST
