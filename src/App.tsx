@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 // import Signup from "./components/Signup";
 import Login from "./components/Login";
+import Register from "./components/Register";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import NavbarComponent from "./components/Navbar";
 
@@ -58,6 +59,15 @@ const App: React.FunctionComponent = () => {
             sessionToken={sessionToken}
             updateToken={updateToken}
           ></Login>
+        }/>
+      </Routes>
+
+      <Routes>
+        <Route path='/register' element={
+          <Register
+            sessionToken={sessionToken}
+            updateToken={updateToken}
+          ></Register>
         }/>
       </Routes>
     </Router>
