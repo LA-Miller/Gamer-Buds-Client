@@ -18,6 +18,9 @@ class Register extends React.Component<
     emailErr: boolean;
     pwdError: boolean;
     usernameErr: boolean;
+    adminPwd: string;
+    adminErrMsg: string;
+    isAdminFieldVisible: boolean;
   }
 > {
   constructor(props: RegisterProps) {
@@ -31,6 +34,9 @@ class Register extends React.Component<
       emailErr: false,
       pwdError: false,
       usernameErr: false,
+      adminPwd: "",
+      adminErrMsg: "",
+      isAdminFieldVisible: false,
     };
   }
 
@@ -48,9 +54,9 @@ class Register extends React.Component<
     this.validate();
 
     if (
-      this.state.emailErr === true ||
-      this.state.pwdError === true ||
-      this.state.usernameErr === true
+      !this.state.emailErr === true ||
+      !this.state.pwdError === true ||
+      !this.state.usernameErr === true
     ) {
       fetch("https://lam-gamer-buds-server.herokuapp.com/user/register", {
         method: "POST",
@@ -59,7 +65,7 @@ class Register extends React.Component<
             username: this.state.username,
             email: this.state.email,
             password: this.state.password,
-            isAdmin: this.state.isAdmin,
+            isAdmin: this.AdminPasswordValidation(),
           },
         }),
         headers: new Headers({
@@ -72,8 +78,31 @@ class Register extends React.Component<
           this.props.updateToken(data.sessionToken);
         })
         .catch((error) => console.log("Error:", error));
-    } else {
-      console.log("It worked");
+    } else if (this.state.emailErr === true) {
+      console.log("Email is invalid");
+    }
+  };
+
+  AdminPasswordValidation = () => {
+    if (this.state.adminPwd.length === 0) {
+      console.log("Admin password is empty. Registering as standard user.");
+      this.setState({
+        isAdmin: false,
+      });
+      return null;
+    } else if (this.state.adminPwd != process.env.REACT_APP_ADMIN_KEY) {
+      console.log("Incorrect admin password! Try again or leave blank.");
+      this.setState({
+        adminErrMsg:
+          "Incorrect admin password. Try again or leave this field blank if you wish to register as a standard user.",
+      });
+      return false;
+    } else if (this.state.adminPwd === process.env.REACT_APP_ADMIN_KEY) {
+      console.log("Correct admin password");
+      this.setState({
+        isAdmin: true,
+      });
+      return true;
     }
   };
 
@@ -103,6 +132,20 @@ class Register extends React.Component<
     } else {
       this.setState({
         usernameErr: false,
+      });
+    }
+  };
+
+  handleAdminCheckbox = () => {
+    if (this.state.isAdminFieldVisible === false) {
+      console.log("AdminFieldVisible: Admin checkbox is checked!");
+      this.setState({
+        isAdminFieldVisible: true,
+      });
+    } else {
+      console.log("Admin checkbox is unchecked");
+      this.setState({
+        isAdminFieldVisible: false,
       });
     }
   };
@@ -137,7 +180,9 @@ class Register extends React.Component<
               required={true}
             />
           </FormGroup>
-          {this.state.usernameErr && <p>Username must be greater than 3 characters</p>}
+          {this.state.usernameErr && (
+            <p>Username must be greater than 3 characters</p>
+          )}
           <FormGroup>
             <Label id="password-label" htmlFor="password">
               Password
@@ -147,15 +192,46 @@ class Register extends React.Component<
               name="password"
               value={this.state.password}
               id="register-password"
+              type="password"
               required={true}
             />
           </FormGroup>
           {this.state.pwdError && <p>Your password is invalid</p>}
+
+          <div id="admin-radio">
+          <Input
+            id="isAdminFieldVisible"
+            name="isAdminFieldVisible"
+            type="checkbox"
+            checked={this.state.isAdminFieldVisible}
+            onChange={this.handleAdminCheckbox}
+          />
+          <Label htmlFor="isAdminFieldVisible" id="isAdmin-label">
+            Admin?
+          </Label>
+          <div id="admin-tooltip" role="tooltip">
+            Leave this field blank if you are not an admin.
+          </div>
+          {this.state.isAdminFieldVisible && (
+            <div>
+              <Label htmlFor="adminPwd" id="admin-pwd-label">
+                Admin Authorization Code
+              </Label>
+              <Input
+                id="adminPwd"
+                name="adminPwd"
+                type="password"
+                onChange={this.handleChange}
+                value={this.state.adminPwd}
+              />
+            </div>
+          )}
+          </div>
           <Button id="register-btn" type="submit">
             Register
           </Button>
         </Form>
-      </div>
+        </div>
     );
   }
 }
