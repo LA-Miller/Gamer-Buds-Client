@@ -26,7 +26,7 @@ class NavbarComponent extends React.Component<NavbarProps, {}>{
     render(): React.ReactNode {
         return(
            <Navbar>
-               <Link to='/'>Home</Link>
+               <Link to='/home'>Home</Link>
                {this.props.sessionToken ? null : <Link to='/login'>Login</Link>}
                {this.props.sessionToken ? null : <Link to='/register'>Register</Link>}
                {this.props.sessionToken ? <Link to='/create'>Create A Post</Link> : null}

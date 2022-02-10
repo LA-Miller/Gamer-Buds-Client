@@ -6,9 +6,11 @@ import Register from "./components/Register";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import NavbarComponent from "./components/Navbar";
 import PostCreate from "./components/PostCreate";
+import Home from "./components/Home";
+
 
 export type AppState = {
-  isLoggedIn: boolean,
+  isLoggedIn: boolean;
   sessionToken: string | null;
   userId: string | null;
   userName: string | null;
@@ -25,6 +27,7 @@ const App: React.FunctionComponent = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [postData, setPostData] = useState<[]>([]);
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -46,7 +49,7 @@ const App: React.FunctionComponent = () => {
 
   return (
     <Router>
-      <NavbarComponent 
+      <NavbarComponent
         isLoggedIn={isLoggedIn}
         userName={userName}
         sessionToken={sessionToken}
@@ -55,30 +58,48 @@ const App: React.FunctionComponent = () => {
       ></NavbarComponent>
 
       <Routes>
-        <Route path='/login' element={
-          <Login
-            sessionToken={sessionToken}
-            updateToken={updateToken}
-          ></Login>
-        }/>
+        <Route
+          path="/login"
+          element={
+            <Login
+              sessionToken={sessionToken}
+              updateToken={updateToken}
+            ></Login>
+          }
+        />
       </Routes>
 
       <Routes>
-        <Route path='/register' element={
-          <Register
-            sessionToken={sessionToken}
-            updateToken={updateToken}
-          ></Register>
-        }/>
+        <Route
+          path="/register"
+          element={
+            <Register
+              sessionToken={sessionToken}
+              updateToken={updateToken}
+            ></Register>
+          }
+        />
       </Routes>
 
       <Routes>
-        <Route path='/create' element={
-          <PostCreate
-            sessionToken={sessionToken}
-            updateToken={updateToken}
-          ></PostCreate>
-        }/>
+        <Route
+          path="/create"
+          element={
+            <PostCreate
+              sessionToken={sessionToken}
+              updateToken={updateToken}
+            ></PostCreate>
+          }
+        />
+      </Routes>
+
+      <Routes>
+        <Route
+          path="/home"
+          element={
+            <Home sessionToken={sessionToken} updateToken={updateToken}></Home>
+          }
+        />
       </Routes>
     </Router>
   );
