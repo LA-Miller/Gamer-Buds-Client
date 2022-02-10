@@ -83,6 +83,10 @@ class Home extends React.Component<
         )
     }
 
+    componentWillMount() {
+        this.fetchPosts();
+    }
+
     componentDidMount() {
         this.fetchPosts();
     }

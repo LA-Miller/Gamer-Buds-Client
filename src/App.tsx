@@ -47,7 +47,7 @@ const App: React.FunctionComponent = () => {
     setIsLoggedIn(false);
   };
 
-  return (
+  return (    
     <Router>
       <NavbarComponent
         isLoggedIn={isLoggedIn}
@@ -95,7 +95,7 @@ const App: React.FunctionComponent = () => {
 
       <Routes>
         <Route
-          path="/home"
+          path="/"
           element={
             <Home sessionToken={sessionToken} updateToken={updateToken}></Home>
           }
