@@ -23,6 +23,7 @@ export type homeProps = {
     updateToken: AppState["updateToken"];
     profilePic: AppState["profilePic"];
     avatar: AppState["avatar"];
+    setRedirect: AppState["setRedirect"];
 }
 
 export type gameAPI = {
@@ -52,7 +53,7 @@ class Home extends React.Component<
     }
 
     fetchPosts = () => {
-        fetch(`${APIURL}/post/`, {
+        fetch(`${APIURL}/post`, {
             method: "GET",
             headers: new Headers({
                 "Content-Type": "application/json",
@@ -67,9 +68,14 @@ class Home extends React.Component<
                 data: data,
             })
             console.log(typeof this.state.data);
-            console.log(data)
+            console.log("homeData:", data)
         })
     } 
+
+    componentDidMount() {
+        this.fetchPosts();
+        this.props.setRedirect(false);
+    }
     
     renderCard = (item: gameAPI, index: number) => {
         return(
@@ -86,6 +92,9 @@ class Home extends React.Component<
                     id="card-img"
                 ></CardImg>
                 <ListGroup className="list-group-flush">
+                {/* <ListGroupItem>
+                    <h5><b>User:</b></h5> {item.username}
+                </ListGroupItem> */}
                 <ListGroupItem>
                     <h5><b>Game:</b></h5> {item.game}
                 </ListGroupItem>
@@ -100,10 +109,6 @@ class Home extends React.Component<
     // componentWillMount() {
     //     this.fetchPosts();
     // }
-
-    componentDidMount() {
-        this.fetchPosts();
-    }
 
     render(): React.ReactNode {
         return(

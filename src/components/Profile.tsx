@@ -1,52 +1,112 @@
 import React from "react";
 import { AppState } from "../App";
+import APIURL from "../helpers/environment";
+import {
+  Container,
+  Row,
+  Col,
+  Carousel,
+  Card,
+  ListGroup,
+  ListGroupItem,
+  CardImg,
+  CardBody,
+  CardTitle,
+  CardText,
+  CardLink,
+} from "reactstrap";
 
 export type profileProps = {
-    sessionToken: AppState["sessionToken"]
-    discord: AppState["discord"];
-    profilePic: AppState["profilePic"];
-    userId: AppState["userId"];
-    username: AppState["username"];
-    avatar: AppState["avatar"];
-}
+  sessionToken: AppState["sessionToken"];
+  discord: AppState["discord"];
+  profilePic: AppState["profilePic"];
+  userId: AppState["userId"];
+  username: AppState["username"];
+  avatar: AppState["avatar"];
+};
 
-class Profile extends React.Component<
-    profileProps, {}
-> {
-    constructor(props: profileProps) {
-        super(props)
+export type gameAPI = {
+  game: string;
+  content: string;
+  id: number;
+  userId: number;
+};
 
-    }
+class Profile extends React.Component<profileProps, { data: [] }> {
+  constructor(props: profileProps) {
+    super(props);
 
-    fetchProfileInfo = () => {
-        fetch(`https://lam-gamer-buds-server.herokuapp.com/user/${this.props.userId}`, {
-            method: "GET",
-            headers: new Headers({
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${this.props.sessionToken}`,
-            })
-        })
-        .then((res) => res.json())
-        .then((data) => {
-            console.log("data:", data);
-        })
-        .catch((error) => console.log("Error:", error));
-    }
+    this.state = {
+      data: [],
+    };
+  }
 
-    componentDidMount() {
-        this.fetchProfileInfo();
-    }
+  fetchProfileInfo = () => {
+    fetch(`${APIURL}/user/find/${localStorage.getItem("userId")}`, {
+      method: "GET",
+      headers: new Headers({
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        this.setState({
+          data: data.user[0].posts,
+        });
+        console.log("data:", this.state.data);
+      })
+      .catch((error) => console.log("Error:", error));
+  };
 
-    render(): React.ReactNode {
-        return(
-            <div>
-                <img src={this.props.avatar}></img>
-                <p>{this.props.username}</p>
-                <p></p>
-                
-            </div>
-        )
-    }
+  componentDidMount() {
+    this.fetchProfileInfo();
+  }
+
+  renderCard = (item: gameAPI, index: number) => {
+    return (
+      <Card
+        style={{ width: "300px", height: "100%", margin: "25px" }}
+        key={index}
+        id="card"
+        className="box"
+      >
+        <CardImg
+          variant="top"
+          src={this.props.avatar}
+          style={{ maxHeight: "200px", minHeight: "200px" }}
+          id="card-img"
+        ></CardImg>
+        <ListGroup className="list-group-flush">
+          {/* <ListGroupItem>
+                    <h5><b>User:</b></h5> {item.username}
+                </ListGroupItem> */}
+          <ListGroupItem>
+            <h5>
+              <b>Game:</b>
+            </h5>{" "}
+            {item.game}
+          </ListGroupItem>
+          <ListGroupItem>
+            <h5>
+              <b>Content:</b>
+            </h5>
+            {item.content}
+          </ListGroupItem>
+        </ListGroup>
+      </Card>
+    );
+  };
+
+  render(): React.ReactNode {
+    return (
+      <div>
+        <img src={this.props.avatar}></img>
+        <p>{localStorage.getItem("username")}</p>
+        <div>{this.state.data.map(this.renderCard)}</div>
+      </div>
+    );
+  }
 }
 
 export default Profile;
