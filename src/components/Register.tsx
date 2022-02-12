@@ -9,6 +9,14 @@ export type RegisterProps = {
   sessionToken: AppState["sessionToken"];
   updateToken: AppState["updateToken"];
   profilePic: AppState["profilePic"];
+  redirect: AppState["redirect"];
+  setRedirect: AppState["setRedirect"];
+  username: AppState["username"];
+  setUsername: AppState["setUsername"];
+  password: AppState["password"];
+  setPassword: AppState["setPassword"];
+  email: AppState["email"];
+  setEmail: AppState["setEmail"];
 };
 
 class Register extends React.Component<
@@ -46,11 +54,14 @@ class Register extends React.Component<
   }
 
   handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({
-      ...this.state,
-      [e.target.name]: e.target.value,
-    });
-    console.log(process.env.REACT_APP_ADMIN_KEY)
+    if (e.target.name === "username") {
+      this.props.setUsername(e.target.value);
+    } else if (e.target.name === "password") {
+      this.props.setPassword(e.target.value);
+    } else if (e.target.name === "email") {
+      this.props.setEmail(e.target.value);
+    }
+    console.log(this.props.username);
   };
 
   //  POST
@@ -72,9 +83,9 @@ class Register extends React.Component<
         method: "POST",
         body: JSON.stringify({
           user: {
-            username: this.state.username,
-            email: this.state.email,
-            password: this.state.password,
+            username: this.props.username,
+            email: this.props.email,
+            password: this.props.password,
             isAdmin: this.AdminPasswordValidation(),
           },
         }),
@@ -85,6 +96,7 @@ class Register extends React.Component<
         .then((res) => res.json())
         .then((data) => {
           console.log("data:", data);
+          this.props.setRedirect(true);
           this.props.updateToken(data.sessionToken);
         })
         .catch((error) => console.log("Error:", error));
@@ -173,7 +185,7 @@ class Register extends React.Component<
             <Input
               onChange={this.handleChange}
               name="email"
-              value={this.state.email}
+              value={this.props.email}
               id="register-email"
               required={true}
             />
@@ -186,7 +198,7 @@ class Register extends React.Component<
             <Input
               onChange={this.handleChange}
               name="username"
-              value={this.state.username}
+              value={this.props.username}
               id="register-username"
               required={true}
             />
@@ -201,7 +213,7 @@ class Register extends React.Component<
             <Input
               onChange={this.handleChange}
               name="password"
-              value={this.state.password}
+              value={this.props.password}
               id="register-password"
               type="password"
               required={true}

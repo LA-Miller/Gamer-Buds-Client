@@ -15,26 +15,17 @@ export type LoginProps = {
   userId: AppState["userId"];
   isAdmin: AppState["isAdmin"];
   setIsAdmin: AppState["setIsAdmin"];
+  redirect: AppState["redirect"];
+  setRedirect: AppState["setRedirect"];
 };
 
 //                                   props    ,  state
 class Login extends React.Component<
-  LoginProps,
-  {
-    username: string;
-    password: string;
-  }
+  LoginProps, {}
 > {
   constructor(props: LoginProps) {
     super(props);
 
-    this.state = {
-      username: "",
-      password: "",
-    };
-
-    //this.handleChange = this.handleChange.bind(this);
-    //this.loginUser = this.loginUser.bind(this);
   }
 
   handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,6 +61,7 @@ class Login extends React.Component<
         this.props.setUserId(data.user.id);
         this.props.setUsername(data.user.username);
         this.props.setIsAdmin(data.user.isAdmin);
+        this.props.setRedirect(true);
         this.props.updateToken(data.sessionToken);
       })
       .catch((error) => console.log("Error:", error));

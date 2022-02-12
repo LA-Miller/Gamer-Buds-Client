@@ -2,9 +2,14 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import { BrowserRouter as Router, Routes, Route, Navigate} from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import NavbarComponent from "./components/Navbar";
-import PostCreate from "./components/PostCreate";
+import PostCreate, { postProps } from "./components/PostCreate";
 import Home from "./components/Home";
 import Profile from "./components/Profile";
 import Avatar from "./assets/default-profile-icon-0.jpg";
@@ -17,7 +22,9 @@ export type AppState = {
   username: string;
   setUsername: (username: string) => void;
   password: string;
+  setPassword: (password: string) => void;
   email: string;
+  setEmail: (email: string) => void;
   profilePic: string;
   discord: string;
   clearToken: () => void;
@@ -28,7 +35,9 @@ export type AppState = {
   redirect: boolean;
   setRedirect: (redirect: boolean) => void;
   isAdmin: boolean;
-  setIsAdmin: (isAdmin: boolean) => void
+  setIsAdmin: (isAdmin: boolean) => void;
+  postId: number | string;
+  setPostId: (postId: number | string) => void;
 };
 
 const App: React.FunctionComponent = () => {
@@ -38,7 +47,7 @@ const App: React.FunctionComponent = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [postData, setPostData] = useState<[]>([]);
+  const [postId, setPostId] = useState<number | string>(0);
   const [profilePic, setProfilePic] = useState<string>("");
   const [discord, setDiscord] = useState<string>("");
   const [avatar, setAvatar] = useState<string>("");
@@ -56,9 +65,9 @@ const App: React.FunctionComponent = () => {
   const updateToken = (newToken: string) => {
     localStorage.setItem("token", newToken);
     setSessionToken(newToken);
-    localStorage.setItem("userId", userId.toString())
-    localStorage.setItem("username", username)
-    localStorage.setItem("isAdmin", isAdmin.toString())
+    localStorage.setItem("userId", userId.toString());
+    localStorage.setItem("username", username);
+    localStorage.setItem("isAdmin", isAdmin.toString());
   };
 
   const clearToken = () => {
@@ -70,6 +79,8 @@ const App: React.FunctionComponent = () => {
   return (
     <Router>
       <NavbarComponent
+        postId={postId}
+        setPostId={setPostId}
         setUserId={setUserId}
         userId={userId}
         setUsername={setUsername}
@@ -87,6 +98,8 @@ const App: React.FunctionComponent = () => {
           path="/login"
           element={
             <Login
+              redirect={redirect}
+              setRedirect={setRedirect}
               setPassword={setPassword}
               password={password}
               userId={userId}
@@ -105,6 +118,14 @@ const App: React.FunctionComponent = () => {
           path="/register"
           element={
             <Register
+            email={email}
+            setEmail={setEmail}
+              setPassword={setPassword}
+             password={password}
+              username={username}
+              setUsername={setUsername}
+              redirect={redirect}
+              setRedirect={setRedirect}
               sessionToken={sessionToken}
               updateToken={updateToken}
               profilePic={profilePic}

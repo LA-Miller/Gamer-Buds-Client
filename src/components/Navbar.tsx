@@ -14,6 +14,8 @@ import {
 import APIURL from "../helpers/environment";
 
 export type NavbarProps = {
+  postId: AppState["postId"];
+  setPostId: AppState["setPostId"];
   redirect: AppState["redirect"];
   setRedirect: AppState["setRedirect"];
   isLoggedIn: AppState["isLoggedIn"];
@@ -38,18 +40,31 @@ class NavbarComponent extends React.Component<
     };
   }
 
-    deleteUser = () => {
-        if(localStorage.getItem("isAdmin") === "true") {
-            console.log("User Deleted");
-            fetch(`${APIURL}/user/${this.props.userId}`, {
-                method: "DELETE",
-                headers: new Headers({
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                }),
-            })
-        }
+  deleteUser = () => {
+    if (localStorage.getItem("isAdmin") === "true") {
+      console.log("User Deleted");
+      fetch(`${APIURL}/user/${this.props.userId}`, {
+        method: "DELETE",
+        headers: new Headers({
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        }),
+      });
     }
+  };
+
+  deletePost = () => {
+      if(localStorage.getItem("isAdmin") === "true") {
+          console.log("Post Deleted");
+          fetch(`${APIURL}/post/${this.props.postId}`, {
+              method: "DELETE",
+              headers: new Headers({
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+              })
+          })
+      }
+  }
 
   render(): React.ReactNode {
     return this.props.redirect ? (
@@ -67,16 +82,24 @@ class NavbarComponent extends React.Component<
         ) : null}
         {localStorage.getItem("isAdmin") === "true" ? (
           <div>
-              <Input
-                type="number"
-                onChange={(e) => this.props.setUserId(e.target.value)}
-                name="userId"
-                value={this.props.userId}
-                required={true}
-              />
-              <Button
-              onClick={this.deleteUser}
-              >Delete User</Button>
+            <Input
+              type="number"
+              onChange={(e) => this.props.setUserId(e.target.value)}
+              name="userId"
+              value={this.props.userId}
+              required={true}
+            />
+            <Button onClick={this.deleteUser}>Delete User</Button>
+            <Input
+              type="number"
+              onChange={(e) => this.props.setPostId(e.target.value)}
+              name="postId"
+              value={this.props.postId}
+              required={true}
+            />
+            <Button
+                onClick={this.deletePost}
+            >Delete A Post</Button>
           </div>
         ) : null}
         {this.props.sessionToken ? (

@@ -51,9 +51,16 @@ class Profile extends React.Component<profileProps, { data: [] }> {
     })
       .then((res) => res.json())
       .then((data) => {
-        this.setState({
-          data: data.user[0].posts,
-        });
+        if (data.user[0].posts) {
+          this.setState({
+            data: data.user[0].posts,
+          });
+        } else {
+            this.setState({
+                data: []
+            })
+        }
+
         console.log("data:", this.state.data);
       })
       .catch((error) => console.log("Error:", error));
@@ -103,7 +110,7 @@ class Profile extends React.Component<profileProps, { data: [] }> {
       <div>
         <img src={this.props.avatar}></img>
         <p>{localStorage.getItem("username")}</p>
-        <div>{this.state.data.map(this.renderCard)}</div>
+        {this.state.data ? <div>{this.state.data.map(this.renderCard)}</div> : null}
       </div>
     );
   }
