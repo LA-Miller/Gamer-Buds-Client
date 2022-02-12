@@ -12,7 +12,7 @@ import {
 
 export type NavbarProps = {
     isLoggedIn: AppState['isLoggedIn'],
-    userName: AppState["userName"],
+    userName: AppState["username"],
     sessionToken: AppState['sessionToken'],
     clearToken: AppState['clearToken'],
     setSessionToken: AppState['setSessionToken']
@@ -30,6 +30,7 @@ class NavbarComponent extends React.Component<NavbarProps, {}>{
                {this.props.sessionToken ? null : <Link to='/login'>Login</Link>}
                {this.props.sessionToken ? null : <Link to='/register'>Register</Link>}
                {this.props.sessionToken ? <Link to='/create'>Create A Post</Link> : null}
+               {this.props.sessionToken ? <Link to='/profile'>Your Profile</Link> : null}
                {this.props.sessionToken ? <Button onClick={this.props.clearToken}>Logout</Button> : null}
            </Navbar>
         )

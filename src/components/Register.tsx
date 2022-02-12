@@ -7,6 +7,7 @@ import { useEffect } from "react";
 export type RegisterProps = {
   sessionToken: AppState["sessionToken"];
   updateToken: AppState["updateToken"];
+  profilePic: AppState["profilePic"];
 };
 
 class Register extends React.Component<

@@ -6,6 +6,10 @@ import { AppState } from "../App";
 export type LoginProps = {
   sessionToken: AppState["sessionToken"];
   updateToken: AppState["updateToken"];
+  setUserId: (e: number) => void;
+  setUsername: (e: string) => void;
+  username: AppState["username"];
+  userId: AppState["userId"];
 };
 
 //                                   props    ,  state
@@ -33,6 +37,8 @@ class Login extends React.Component<
       ...this.state,
       [e.target.name]: e.target.value,
     });
+    console.log(this.props.username)
+    console.log(this.props.userId)
   };
 
   // FETCH
@@ -55,9 +61,15 @@ class Login extends React.Component<
       .then((data) => {
         console.log("data:", data);
         this.props.updateToken(data.sessionToken);
+        this.props.setUsername(data.user.username);
+        this.props.setUserId(data.user.id);
       })
       .catch((error) => console.log("Error:", error));
   };
+
+  componentWillUnmount() {
+    
+  }
 
   render(): React.ReactNode {
     return (

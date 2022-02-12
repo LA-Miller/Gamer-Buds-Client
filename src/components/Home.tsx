@@ -14,17 +14,21 @@ import {
     CardText,
     CardLink,
     } from "reactstrap";
+import Avatar from '../assets/default-profile-icon-0.jpg'
+
 
 export type homeProps = {
     sessionToken: AppState["sessionToken"];
     updateToken: AppState["updateToken"];
+    profilePic: AppState["profilePic"];
+    avatar: AppState["avatar"];
 }
 
 export type gameAPI = {
     game: string,
     content: string,
     id: number,
-    userId: number
+    userId: number,
 }
 
 class Home extends React.Component<
@@ -33,6 +37,7 @@ class Home extends React.Component<
     data: [],
     game: string,
     content: string,
+    avatar: string,
 } > {
     constructor(props: homeProps) {
         super(props)
@@ -40,7 +45,8 @@ class Home extends React.Component<
         this.state = {
             data: [],
             game: "",
-            content: ""
+            content: "",
+            avatar: Avatar,
         }
     }
 
@@ -70,7 +76,14 @@ class Home extends React.Component<
                 style={{ width: "300px", height: "100%", margin: "25px"}}
                 key={index}
                 id="card"
+                className="box"
             >
+                <CardImg
+                    variant="top"
+                    src={this.props.avatar}
+                    style={{ maxHeight: "200px", minHeight: "200px" }}
+                    id="card-img"
+                ></CardImg>
                 <ListGroup className="list-group-flush">
                 <ListGroupItem>
                     <h5><b>Game:</b></h5> {item.game}
@@ -83,9 +96,9 @@ class Home extends React.Component<
         )
     }
 
-    componentWillMount() {
-        this.fetchPosts();
-    }
+    // componentWillMount() {
+    //     this.fetchPosts();
+    // }
 
     componentDidMount() {
         this.fetchPosts();
