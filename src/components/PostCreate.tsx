@@ -1,6 +1,7 @@
 import React from "react";
 import { AppState } from "../App";
 import { Form, FormGroup, Label, Input, Button } from "reactstrap";
+import APIURL from "../helpers/environment";
 
 export type postProps = {
     sessionToken: AppState["sessionToken"];
@@ -25,7 +26,7 @@ class PostCreate extends React.Component<
     postFetch = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        fetch("https://lam-gamer-buds-server.herokuapp.com/post/create", {
+        fetch(`${APIURL}/post/create`, {
             method: "POST",
             body: JSON.stringify({
                 post: {

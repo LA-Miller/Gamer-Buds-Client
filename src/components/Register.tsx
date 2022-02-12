@@ -3,6 +3,7 @@ import { Form, FormGroup, Label, Input, Button } from "reactstrap";
 import { AppState } from "../App";
 import { validEmail, validPassword } from "./Regex";
 import { useEffect } from "react";
+import APIURL from "../helpers/environment";
 
 export type RegisterProps = {
   sessionToken: AppState["sessionToken"];
@@ -67,7 +68,7 @@ class Register extends React.Component<
       this.state.usernameErr === false &&
       (this.state.isAdminFieldValid === true || this.state.isAdminFieldValid === null)
     ) {
-      fetch("https://lam-gamer-buds-server.herokuapp.com/user/register", {
+      fetch(`${APIURL}/user/register`, {
         method: "POST",
         body: JSON.stringify({
           user: {

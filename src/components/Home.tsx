@@ -15,6 +15,7 @@ import {
     CardLink,
     } from "reactstrap";
 import Avatar from '../assets/default-profile-icon-0.jpg'
+import APIURL from "../helpers/environment";
 
 
 export type homeProps = {
@@ -51,7 +52,7 @@ class Home extends React.Component<
     }
 
     fetchPosts = () => {
-        fetch("https://lam-gamer-buds-server.herokuapp.com/post/", {
+        fetch(`${APIURL}/post/`, {
             method: "GET",
             headers: new Headers({
                 "Content-Type": "application/json",

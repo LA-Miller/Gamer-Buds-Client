@@ -2,6 +2,7 @@ import { stringify } from "querystring";
 import React, { useState } from "react";
 import { Form, FormGroup, Label, Input, Button } from "reactstrap";
 import { AppState } from "../App";
+import APIURL from "../helpers/environment";
 
 export type LoginProps = {
   sessionToken: AppState["sessionToken"];
@@ -45,7 +46,7 @@ class Login extends React.Component<
   loginUser = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    fetch("https://lam-gamer-buds-server.herokuapp.com/user/login", {
+    fetch(`${APIURL}/user/login`, {
       method: "POST",
       body: JSON.stringify({
         user: {
