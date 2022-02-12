@@ -13,6 +13,8 @@ export type LoginProps = {
   username: AppState["username"];
   password: AppState["password"];
   userId: AppState["userId"];
+  isAdmin: AppState["isAdmin"];
+  setIsAdmin: AppState["setIsAdmin"];
 };
 
 //                                   props    ,  state
@@ -67,6 +69,7 @@ class Login extends React.Component<
 
         this.props.setUserId(data.user.id);
         this.props.setUsername(data.user.username);
+        this.props.setIsAdmin(data.user.isAdmin);
         this.props.updateToken(data.sessionToken);
       })
       .catch((error) => console.log("Error:", error));

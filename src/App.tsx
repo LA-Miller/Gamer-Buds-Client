@@ -13,7 +13,9 @@ export type AppState = {
   isLoggedIn: boolean;
   sessionToken: string | null;
   userId: number | string;
+  setUserId: (userId: number | string) => void;
   username: string;
+  setUsername: (username: string) => void;
   password: string;
   email: string;
   profilePic: string;
@@ -25,6 +27,8 @@ export type AppState = {
   navigate: (arg0: string, arg1: object) => void;
   redirect: boolean;
   setRedirect: (redirect: boolean) => void;
+  isAdmin: boolean;
+  setIsAdmin: (isAdmin: boolean) => void
 };
 
 const App: React.FunctionComponent = () => {
@@ -39,6 +43,7 @@ const App: React.FunctionComponent = () => {
   const [discord, setDiscord] = useState<string>("");
   const [avatar, setAvatar] = useState<string>("");
   const [redirect, setRedirect] = useState<boolean>(false);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -53,6 +58,7 @@ const App: React.FunctionComponent = () => {
     setSessionToken(newToken);
     localStorage.setItem("userId", userId.toString())
     localStorage.setItem("username", username)
+    localStorage.setItem("isAdmin", isAdmin.toString())
   };
 
   const clearToken = () => {
@@ -64,8 +70,11 @@ const App: React.FunctionComponent = () => {
   return (
     <Router>
       <NavbarComponent
+        setUserId={setUserId}
+        userId={userId}
+        setUsername={setUsername}
         isLoggedIn={isLoggedIn}
-        userName={username}
+        username={username}
         sessionToken={sessionToken}
         clearToken={clearToken}
         setSessionToken={setSessionToken}
@@ -86,6 +95,8 @@ const App: React.FunctionComponent = () => {
               sessionToken={sessionToken}
               updateToken={updateToken}
               setUsername={setUsername}
+              isAdmin={isAdmin}
+              setIsAdmin={setIsAdmin}
             ></Login>
           }
         />
