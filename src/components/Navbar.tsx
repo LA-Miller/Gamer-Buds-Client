@@ -1,39 +1,64 @@
 import React from "react";
 import { AppState } from "../App";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import {
-    Navbar,
-    NavbarBrand,
-    NavbarToggler,
-    Nav,
-    NavItem,
-    Button,
+  Navbar,
+  NavbarBrand,
+  NavbarToggler,
+  Nav,
+  NavItem,
+  Button,
 } from "reactstrap";
 
 export type NavbarProps = {
-    isLoggedIn: AppState['isLoggedIn'],
-    userName: AppState["userName"],
-    sessionToken: AppState['sessionToken'],
-    clearToken: AppState['clearToken'],
-    setSessionToken: AppState['setSessionToken']
-}
+  redirect: AppState["redirect"];
+  setRedirect: AppState["setRedirect"];
+  isLoggedIn: AppState["isLoggedIn"];
+  userName: AppState["username"];
+  sessionToken: AppState["sessionToken"];
+  clearToken: AppState["clearToken"];
+  setSessionToken: AppState["setSessionToken"];
+};
 
-class NavbarComponent extends React.Component<NavbarProps, {}>{
-    constructor(props: NavbarProps) {
-        super(props)
-    }
+class NavbarComponent extends React.Component<NavbarProps, { toggle: boolean }> {
+  constructor(props: NavbarProps) {
+    super(props);
 
-    render(): React.ReactNode {
-        return(
-           <Navbar>
-               <Link to='/'>Home</Link>
-               {this.props.sessionToken ? null : <Link to='/login'>Login</Link>}
-               {this.props.sessionToken ? null : <Link to='/register'>Register</Link>}
-               {this.props.sessionToken ? <Link to='/create'>Create A Post</Link> : null}
-               {this.props.sessionToken ? <Button onClick={this.props.clearToken}>Logout</Button> : null}
-           </Navbar>
-        )
+    this.state = {
+        toggle: false
     }
+  }
+
+  render(): React.ReactNode {
+    return this.props.redirect ? (
+      <Navigate to="/" replace={true} />
+    ) : (
+      <Navbar>
+        <Link to="/">Home</Link>
+        {this.props.sessionToken ? null : <Link to="/login">Login</Link>}
+        {this.props.sessionToken ? null : <Link to="/register">Register</Link>}
+        {this.props.sessionToken ? (
+          <Link to="/create">Create A Post</Link>
+        ) : null}
+        {this.props.sessionToken ? (
+          <Link to="/profile">Your Profile</Link>
+        ) : null}
+        {this.props.sessionToken ? (
+          <Button
+            onClick={() => {
+              this.props.setRedirect(true);
+              this.props.clearToken();
+            //   this.setState({
+            //       toggle: !this.state.toggle
+            //   })
+            }}
+          >
+            Logout
+          </Button>
+        ) : null}
+      </Navbar>
+    );
+  }
 }
 
 export default NavbarComponent;

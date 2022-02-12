@@ -3,10 +3,12 @@ import { Form, FormGroup, Label, Input, Button } from "reactstrap";
 import { AppState } from "../App";
 import { validEmail, validPassword } from "./Regex";
 import { useEffect } from "react";
+import APIURL from "../helpers/environment";
 
 export type RegisterProps = {
   sessionToken: AppState["sessionToken"];
   updateToken: AppState["updateToken"];
+  profilePic: AppState["profilePic"];
 };
 
 class Register extends React.Component<
@@ -48,6 +50,7 @@ class Register extends React.Component<
       ...this.state,
       [e.target.name]: e.target.value,
     });
+    console.log(process.env.REACT_APP_ADMIN_KEY)
   };
 
   //  POST
@@ -65,7 +68,7 @@ class Register extends React.Component<
       this.state.usernameErr === false &&
       (this.state.isAdminFieldValid === true || this.state.isAdminFieldValid === null)
     ) {
-      fetch("https://lam-gamer-buds-server.herokuapp.com/user/register", {
+      fetch(`${APIURL}/user/register`, {
         method: "POST",
         body: JSON.stringify({
           user: {

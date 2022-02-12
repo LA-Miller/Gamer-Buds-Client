@@ -2,10 +2,17 @@ import { stringify } from "querystring";
 import React, { useState } from "react";
 import { Form, FormGroup, Label, Input, Button } from "reactstrap";
 import { AppState } from "../App";
+import APIURL from "../helpers/environment";
 
 export type LoginProps = {
   sessionToken: AppState["sessionToken"];
   updateToken: AppState["updateToken"];
+  setUserId: (e: number) => void;
+  setUsername: (e: string) => void;
+  setPassword: (e: string) => void;
+  username: AppState["username"];
+  password: AppState["password"];
+  userId: AppState["userId"];
 };
 
 //                                   props    ,  state
@@ -29,22 +36,25 @@ class Login extends React.Component<
   }
 
   handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({
-      ...this.state,
-      [e.target.name]: e.target.value,
-    });
+    if (e.target.name === "username") {
+      this.props.setUsername(e.target.value);
+    } else {
+      this.props.setPassword(e.target.value);
+    }
+    console.log(this.props.username);
+    console.log(this.props.userId);
   };
 
   // FETCH
   loginUser = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    fetch("https://lam-gamer-buds-server.herokuapp.com/user/login", {
+    fetch(`${APIURL}/user/login`, {
       method: "POST",
       body: JSON.stringify({
         user: {
-          username: this.state.username,
-          password: this.state.password,
+          username: this.props.username,
+          password: this.props.password,
         },
       }),
       headers: new Headers({
@@ -54,10 +64,15 @@ class Login extends React.Component<
       .then((res) => res.json())
       .then((data) => {
         console.log("data:", data);
+
+        this.props.setUserId(data.user.id);
+        this.props.setUsername(data.user.username);
         this.props.updateToken(data.sessionToken);
       })
       .catch((error) => console.log("Error:", error));
   };
+
+  componentWillUnmount() {}
 
   render(): React.ReactNode {
     return (
@@ -71,7 +86,7 @@ class Login extends React.Component<
             <Input
               onChange={this.handleChange}
               name="username"
-              value={this.state.username}
+              value={this.props.username}
               id="login-username"
               required={true}
             />
@@ -83,7 +98,7 @@ class Login extends React.Component<
             <Input
               onChange={this.handleChange}
               name="password"
-              value={this.state.password}
+              value={this.props.password}
               id="login-pass"
               required={true}
             />
