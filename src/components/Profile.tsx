@@ -14,7 +14,14 @@ import {
   CardTitle,
   CardText,
   CardLink,
+  Button,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  Input,
 } from "reactstrap";
+import { isJsxOpeningElement } from "typescript";
 
 export type profileProps = {
   sessionToken: AppState["sessionToken"];
@@ -23,6 +30,10 @@ export type profileProps = {
   userId: AppState["userId"];
   username: AppState["username"];
   avatar: AppState["avatar"];
+  game: AppState["game"];
+  setGame: AppState["setGame"];
+  content: AppState["content"];
+  setContent: AppState["setContent"];
 };
 
 export type gameAPI = {
@@ -32,14 +43,31 @@ export type gameAPI = {
   userId: number;
 };
 
-class Profile extends React.Component<profileProps, { data: [] }> {
+class Profile extends React.Component<
+  profileProps,
+  {
+    data: [];
+    isOpen: boolean;
+    editMode: boolean;
+  }
+> {
   constructor(props: profileProps) {
     super(props);
 
     this.state = {
       data: [],
+      isOpen: false,
+      editMode: false,
     };
   }
+
+  handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.name === "game") {
+      this.props.setGame(e.target.value);
+    } else if (e.target.name === "content") {
+      this.props.setContent(e.target.value);
+    }
+  };
 
   fetchProfileInfo = () => {
     fetch(`${APIURL}/user/find/${localStorage.getItem("userId")}`, {
@@ -56,9 +84,9 @@ class Profile extends React.Component<profileProps, { data: [] }> {
             data: data.user[0].posts,
           });
         } else {
-            this.setState({
-                data: []
-            })
+          this.setState({
+            data: [],
+          });
         }
 
         console.log("data:", this.state.data);
@@ -66,51 +94,140 @@ class Profile extends React.Component<profileProps, { data: [] }> {
       .catch((error) => console.log("Error:", error));
   };
 
+  updatePost = (postId: number) => {
+    fetch(`${APIURL}/update/${postId}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        game: this.props.game,
+        content: this.props.content,
+      }),
+      headers: new Headers({
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.props.sessionToken}`,
+      }),
+    })
+      .then((json) => console.log(json))
+      .then(() => this.fetchProfileInfo)
+      .catch((err) => console.log(err));
+  };
+
+  deletePost = (postId: number) => {
+    fetch(`${APIURL}/${postId}`, {
+      method: "DELETE",
+      headers: new Headers({
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.props.sessionToken}`,
+      }),
+    }).then(() => this.fetchProfileInfo());
+  };
+
   componentDidMount() {
     this.fetchProfileInfo();
   }
 
-  renderCard = (item: gameAPI, index: number) => {
+  // renderCard = (item: gameAPI, index: number) => {
+  //   return (
+  //     <Card
+  //       style={{ width: "300px", height: "100%", margin: "25px" }}
+  //       key={index}
+  //       id="card"
+  //       className="box"
+  //     >
+  //       <CardImg
+  //         variant="top"
+  //         src={this.props.avatar}
+  //         style={{ maxHeight: "200px", minHeight: "200px" }}
+  //         id="card-img"
+  //       ></CardImg>
+  //       <ListGroup className="list-group-flush">
+  //         <Button>Edit Post</Button>
+  //         <ListGroupItem>
+  //           <h5>
+  //             <b>Game:</b>
+  //           </h5>{" "}
+  //           {item.game}
+  //         </ListGroupItem>
+  //         <ListGroupItem>
+  //           <h5>
+  //             <b>Content:</b>
+  //           </h5>
+  //           {item.content}
+  //         </ListGroupItem>
+  //       </ListGroup>
+  //     </Card>
+  //   );
+  // };
+
+  renderModal = (item: gameAPI, index: number) => {
     return (
-      <Card
-        style={{ width: "300px", height: "100%", margin: "25px" }}
-        key={index}
-        id="card"
-        className="box"
-      >
-        <CardImg
-          variant="top"
-          src={this.props.avatar}
-          style={{ maxHeight: "200px", minHeight: "200px" }}
-          id="card-img"
-        ></CardImg>
-        <ListGroup className="list-group-flush">
-          {/* <ListGroupItem>
-                    <h5><b>User:</b></h5> {item.username}
-                </ListGroupItem> */}
-          <ListGroupItem>
-            <h5>
-              <b>Game:</b>
-            </h5>{" "}
-            {item.game}
-          </ListGroupItem>
-          <ListGroupItem>
-            <h5>
-              <b>Content:</b>
-            </h5>
-            {item.content}
-          </ListGroupItem>
-        </ListGroup>
-      </Card>
+      <Container>
+        <Row>
+          <Col md="2"></Col>
+          <Col md="8">
+            <Card
+              style={{ width: "100", height: "100", margin: "20px" }}
+              key={index}
+              className="box"
+            >
+              <CardImg variant="top" src={this.props.avatar} />
+              <ListGroup className="list-group-flush">
+                <ListGroupItem>
+                  Game:
+                  <Input
+                    onChange={this.handleChange}
+                    name="game"
+                    contentEditable={true}
+                    placeholder={item.game}
+                    value={this.props.game}
+                  />
+                </ListGroupItem>
+                <ListGroupItem>
+                  Content:
+                  <Input
+                    onChange={this.handleChange}
+                    name="content"
+                    contentEditable={true}
+                    placeholder={item.content}
+                    value={this.props.content}
+                  />
+                </ListGroupItem>
+              </ListGroup>
+              <div id="edit-card-btns">
+                <Button
+                  style={{ backgroundColor: "green"}}
+                  id="update-btn"
+                  onClick={() => this.updatePost(item.id)}
+                >Update Post</Button>
+                <Button
+                  style={{ backgroundColor: "red" }}
+                  id="delete-btn"
+                  onClick={() => this.deletePost(item.id)}
+                >
+                  Delete Post
+                </Button>
+              </div>
+            </Card>
+          </Col>
+          <Col md="2"></Col>
+        </Row>
+      </Container>
     );
+  };
+
+  toggle = () => {
+    this.setState({
+      isOpen: !this.state.isOpen,
+    });
   };
 
   render(): React.ReactNode {
     return (
       <div>
-        <img src={this.props.avatar}></img>
-        <p>{localStorage.getItem("username")}</p>
-        {this.state.data ? <div>{this.state.data.map(this.renderCard)}</div> : null}
+        <img src={this.props.avatar} style={{ margin: "20px" }}></img>
+        <p style={{ margin: "20px"}}>{localStorage.getItem("username")}</p>
+        {this.state.data ? (
+          <div>{this.state.data.map(this.renderModal)}</div>
+        ) : null}
       </div>
     );
   }

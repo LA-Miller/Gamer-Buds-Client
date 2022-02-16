@@ -26,6 +26,7 @@ export type NavbarProps = {
   setUsername: AppState["setUsername"];
   setUserId: AppState["setUserId"];
   userId: AppState["userId"];
+  setIsLoggedIn: AppState["setIsLoggedIn"];
 };
 
 class NavbarComponent extends React.Component<
@@ -54,17 +55,31 @@ class NavbarComponent extends React.Component<
   };
 
   deletePost = () => {
-      if(localStorage.getItem("isAdmin") === "true") {
-          console.log("Post Deleted");
-          fetch(`${APIURL}/post/${this.props.postId}`, {
-              method: "DELETE",
-              headers: new Headers({
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${localStorage.getItem("token")}`,
-              })
-          })
-      }
-  }
+    if (localStorage.getItem("isAdmin") === "true") {
+      console.log("Post Deleted");
+      fetch(`${APIURL}/post/${this.props.postId}`, {
+        method: "DELETE",
+        headers: new Headers({
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        }),
+      });
+    }
+  };
+
+//   displayLoggedOutNavbar = () => {
+//     return (
+//       <Navbar>
+//         <Link to="/">Home</Link>
+//         <Link to="/login">Login</Link>
+//         <Link to="/register">Register</Link>
+//       </Navbar>
+//     );
+//   };
+
+//   componentDidUpdate() {
+//     this.displayLoggedOutNavbar();
+//   }
 
   render(): React.ReactNode {
     return this.props.redirect ? (
@@ -97,19 +112,15 @@ class NavbarComponent extends React.Component<
               value={this.props.postId}
               required={true}
             />
-            <Button
-                onClick={this.deletePost}
-            >Delete A Post</Button>
+            <Button onClick={this.deletePost}>Delete A Post</Button>
           </div>
         ) : null}
         {this.props.sessionToken ? (
           <Button
             onClick={() => {
               this.props.setRedirect(true);
+              this.props.setIsLoggedIn(false);
               this.props.clearToken();
-              //   this.setState({
-              //       toggle: !this.state.toggle
-              //   })
             }}
           >
             Logout

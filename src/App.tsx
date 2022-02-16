@@ -16,6 +16,7 @@ import Avatar from "./assets/default-profile-icon-0.jpg";
 
 export type AppState = {
   isLoggedIn: boolean;
+  setIsLoggedIn: (isLoggedIn: boolean) => void;
   sessionToken: string | null;
   userId: number | string;
   setUserId: (userId: number | string) => void;
@@ -38,6 +39,10 @@ export type AppState = {
   setIsAdmin: (isAdmin: boolean) => void;
   postId: number | string;
   setPostId: (postId: number | string) => void;
+  game: string;
+  setGame: (game: string) => void;
+  content: string;
+  setContent: (content: string) => void;
 };
 
 const App: React.FunctionComponent = () => {
@@ -53,6 +58,8 @@ const App: React.FunctionComponent = () => {
   const [avatar, setAvatar] = useState<string>("");
   const [redirect, setRedirect] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [game, setGame] = useState<string>("");
+  const [content, setContent] = useState<string>("");
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -85,6 +92,7 @@ const App: React.FunctionComponent = () => {
         userId={userId}
         setUsername={setUsername}
         isLoggedIn={isLoggedIn}
+        setIsLoggedIn={setIsLoggedIn}
         username={username}
         sessionToken={sessionToken}
         clearToken={clearToken}
@@ -98,6 +106,7 @@ const App: React.FunctionComponent = () => {
           path="/login"
           element={
             <Login
+              setIsLoggedIn={setIsLoggedIn}
               redirect={redirect}
               setRedirect={setRedirect}
               setPassword={setPassword}
@@ -147,6 +156,10 @@ const App: React.FunctionComponent = () => {
           path="/profile"
           element={
             <Profile
+              game={game}
+              setGame={setGame}
+              content={content}
+              setContent={setContent}
               sessionToken={sessionToken}
               username={username}
               discord={discord}

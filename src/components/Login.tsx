@@ -17,6 +17,7 @@ export type LoginProps = {
   setIsAdmin: AppState["setIsAdmin"];
   redirect: AppState["redirect"];
   setRedirect: AppState["setRedirect"];
+  setIsLoggedIn: AppState["setIsLoggedIn"];
 };
 
 //                                   props    ,  state
@@ -34,8 +35,6 @@ class Login extends React.Component<
     } else {
       this.props.setPassword(e.target.value);
     }
-    console.log(this.props.username);
-    console.log(this.props.userId);
   };
 
   // FETCH
@@ -62,6 +61,7 @@ class Login extends React.Component<
         this.props.setUsername(data.user.username);
         this.props.setIsAdmin(data.user.isAdmin);
         this.props.setRedirect(true);
+        this.props.setIsLoggedIn(true);
         this.props.updateToken(data.sessionToken);
       })
       .catch((error) => console.log("Error:", error));
@@ -92,6 +92,7 @@ class Login extends React.Component<
             </Label>
             <Input
               onChange={this.handleChange}
+              type="password"
               name="password"
               value={this.props.password}
               id="login-pass"
