@@ -26,14 +26,20 @@ import { isJsxOpeningElement } from "typescript";
 export type profileProps = {
   sessionToken: AppState["sessionToken"];
   discord: AppState["discord"];
+  setDiscord: AppState["setDiscord"];
   profilePic: AppState["profilePic"];
   userId: AppState["userId"];
   username: AppState["username"];
+  setUsername: AppState["setUsername"];
   avatar: AppState["avatar"];
   game: AppState["game"];
   setGame: AppState["setGame"];
   content: AppState["content"];
   setContent: AppState["setContent"];
+  email: AppState["email"];
+  setEmail: AppState["setEmail"];
+  password: AppState["password"];
+  setPassword: AppState["setPassword"];
 };
 
 export type gameAPI = {
@@ -43,21 +49,34 @@ export type gameAPI = {
   userId: number;
 };
 
+export type profileAPI = {
+  username: string;
+  email: string;
+  password: string;
+  isAdmin: boolean;
+  profilePic: string;
+  discord: string;
+};
+
 class Profile extends React.Component<
   profileProps,
   {
-    data: [];
+    postData: [];
+    profileData: [];
     isOpen: boolean;
     editMode: boolean;
+    profileEditMode: boolean;
   }
 > {
   constructor(props: profileProps) {
     super(props);
 
     this.state = {
-      data: [],
+      postData: [],
+      profileData: [],
       isOpen: false,
       editMode: false,
+      profileEditMode: false,
     };
   }
 
@@ -82,15 +101,19 @@ class Profile extends React.Component<
         console.log(data);
         if (data.user[0].posts) {
           this.setState({
-            data: data.user[0].posts,
+            postData: data.user[0].posts,
           });
         } else {
           this.setState({
-            data: [],
+            postData: [],
           });
         }
 
-        console.log("data:", this.state.data);
+        this.props.setUsername(data.user[0].username);
+        this.props.setEmail(data.user[0].email);
+        this.props.setDiscord(data.user[0].discord);
+
+        console.log("postData:", this.state.postData);
       })
       .catch((error) => console.log("Error:", error));
   };
@@ -112,7 +135,7 @@ class Profile extends React.Component<
       .then((json) => console.log(json.json()))
       .then(() => {
         this.setState({
-          data: [],
+          postData: [],
         });
         this.fetchProfileInfo();
       })
@@ -197,6 +220,12 @@ class Profile extends React.Component<
     });
   };
 
+  toggleProfileEdit = () => {
+    this.setState({
+      profileEditMode: !this.state.profileEditMode,
+    });
+  };
+
   render(): React.ReactNode {
     return (
       <div>
@@ -204,9 +233,26 @@ class Profile extends React.Component<
         <p></p>
         <p>{this.props.discord}</p>
         <img src={this.props.avatar} style={{ margin: "20px" }}></img>
-        <Button>Edit Profile</Button>
-        {this.state.data ? (
-          <div>{this.state.data.map(this.renderModal)}</div>
+        <Button onClick={this.toggleProfileEdit}>Edit Profile</Button>
+        {this.state.profileEditMode ? (
+          <Modal
+            centered
+            fullscreen="xl"
+            scrollable
+            size="xl"
+            toggle={this.toggleProfileEdit}
+            isOpen={this.state.profileEditMode}
+          >
+            <ModalHeader>Your Profile Info</ModalHeader>
+            <ModalBody>
+              <div>Username: {this.props.username}</div>
+              <div>Email: {this.props.email}</div>
+              <div>Discord: {this.props.discord}</div>
+            </ModalBody>
+          </Modal>
+        ) : null}
+        {this.state.postData ? (
+          <div>{this.state.postData.map(this.renderModal)}</div>
         ) : null}
       </div>
     );

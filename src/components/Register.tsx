@@ -106,6 +106,10 @@ class Register extends React.Component<
         .then((res) => res.json())
         .then((data) => {
           console.log("data:", data);
+          this.props.setEmail(data.user.email);
+          this.props.setDiscord(data.user.discord);
+          this.props.setPassword(data.user.password);
+          this.props.setUsername(data.user.username);
           this.props.setUserId(data.user.id);
           this.props.setRedirect(true);
           this.props.updateToken(data.sessionToken);

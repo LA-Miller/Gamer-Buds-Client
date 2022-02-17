@@ -167,12 +167,18 @@ const App: React.FunctionComponent = () => {
           path="/profile"
           element={
             <Profile
+              setDiscord={setDiscord}
+              password={password}
+              setPassword={setPassword}
+              email={email}
+              setEmail={setEmail}
               game={game}
               setGame={setGame}
               content={content}
               setContent={setContent}
               sessionToken={sessionToken}
               username={username}
+              setUsername={setUsername}
               discord={discord}
               profilePic={profilePic}
               avatar={avatar}
