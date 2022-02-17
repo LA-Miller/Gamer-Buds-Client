@@ -247,6 +247,7 @@ class Profile extends React.Component<
   };
 
   toggleProfileEdit = () => {
+    this.fetchProfileInfo();
     this.setState({
       profileEditMode: !this.state.profileEditMode,
     });
