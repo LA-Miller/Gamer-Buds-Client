@@ -7,12 +7,12 @@ import APIURL from "../helpers/environment";
 export type LoginProps = {
   sessionToken: AppState["sessionToken"];
   updateToken: AppState["updateToken"];
-  setUserId: (e: number) => void;
-  setUsername: (e: string) => void;
+  password: AppState["password"];
   setPassword: (e: string) => void;
   username: AppState["username"];
-  password: AppState["password"];
+  setUsername: (e: string) => void;
   userId: AppState["userId"];
+  setUserId: (e: number) => void;
   isAdmin: AppState["isAdmin"];
   setIsAdmin: AppState["setIsAdmin"];
   redirect: AppState["redirect"];

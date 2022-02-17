@@ -17,6 +17,12 @@ export type RegisterProps = {
   setPassword: AppState["setPassword"];
   email: AppState["email"];
   setEmail: AppState["setEmail"];
+  adminPwd: AppState["adminPwd"];
+  setAdminPwd: AppState["setAdminPwd"];
+  discord: AppState["discord"];
+  setDiscord: AppState["setDiscord"];
+  userId: AppState["userId"];
+  setUserId: AppState["setUserId"];
 };
 
 class Register extends React.Component<
@@ -60,6 +66,10 @@ class Register extends React.Component<
       this.props.setPassword(e.target.value);
     } else if (e.target.name === "email") {
       this.props.setEmail(e.target.value);
+    } else if (e.target.name === "adminPwd") {
+      this.props.setAdminPwd(e.target.value);
+    } else if (e.target.name === "discord") {
+      this.props.setDiscord(e.target.value);
     }
     console.log(this.props.username);
   };
@@ -96,6 +106,7 @@ class Register extends React.Component<
         .then((res) => res.json())
         .then((data) => {
           console.log("data:", data);
+          this.props.setUserId(data.user.id);
           this.props.setRedirect(true);
           this.props.updateToken(data.sessionToken);
         })
@@ -106,13 +117,13 @@ class Register extends React.Component<
   };
 
   AdminPasswordValidation = () => {
-    if (this.state.adminPwd.length === 0) {
+    if (this.props.adminPwd.length === 0) {
       console.log("Admin password is empty. Registering as standard user.");
       this.setState({
         isAdminFieldValid: true,
       })
       return false;
-    } else if (this.state.adminPwd != process.env.REACT_APP_ADMIN_KEY) {
+    } else if (this.props.adminPwd != process.env.REACT_APP_ADMIN_KEY) {
       console.log("Incorrect admin password! Try again or leave blank.");
       this.setState({
         adminErrMsg:
@@ -120,7 +131,7 @@ class Register extends React.Component<
         isAdminFieldValid: false,
       });
       return false;
-    } else if (this.state.adminPwd === process.env.REACT_APP_ADMIN_KEY) {
+    } else if (this.props.adminPwd === process.env.REACT_APP_ADMIN_KEY) {
       console.log("Correct admin password");
       this.setState({
         isAdminFieldValid: true,
@@ -130,7 +141,7 @@ class Register extends React.Component<
   };
 
   validate = () => {
-    if (!validEmail.test(this.state.email)) {
+    if (!validEmail.test(this.props.email)) {
       this.setState({
         emailErr: true,
       });
@@ -139,7 +150,7 @@ class Register extends React.Component<
         emailErr: false,
       });
     }
-    if (!validPassword.test(this.state.password)) {
+    if (!validPassword.test(this.props.password)) {
       this.setState({
         pwdError: true,
       });
@@ -148,7 +159,7 @@ class Register extends React.Component<
         pwdError: false,
       });
     }
-    if (this.state.username.length <= 3) {
+    if (this.props.username.length <= 3) {
       this.setState({
         usernameErr: true,
       });
@@ -207,6 +218,17 @@ class Register extends React.Component<
             <p>Username must be greater than 3 characters</p>
           )}
           <FormGroup>
+            <Label id="discord-label">
+              Discord
+            </Label>
+            <Input 
+              onChange={this.handleChange}
+              name="discord"
+              value={this.props.discord}
+              id="register-discord"
+            />
+          </FormGroup>
+          <FormGroup>
             <Label id="password-label" htmlFor="password">
               Password
             </Label>
@@ -245,7 +267,7 @@ class Register extends React.Component<
                   id="adminPwd-Input"
                   name="adminPwd"
                   type="password"
-                  value={this.state.adminPwd}
+                  value={this.props.adminPwd}
                 />
               </div>
             )}

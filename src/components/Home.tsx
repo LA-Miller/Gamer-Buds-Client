@@ -31,6 +31,7 @@ export type gameAPI = {
     content: string,
     id: number,
     userId: number,
+    username: string,
 }
 
 class Home extends React.Component<
@@ -85,6 +86,7 @@ class Home extends React.Component<
                 id="card"
                 className="box"
             >
+                <h4>{item.username}</h4>
                 <CardImg
                     variant="top"
                     src={this.props.avatar}
@@ -92,9 +94,6 @@ class Home extends React.Component<
                     id="card-img"
                 ></CardImg>
                 <ListGroup className="list-group-flush">
-                {/* <ListGroupItem>
-                    <h5><b>User:</b></h5> {item.username}
-                </ListGroupItem> */}
                 <ListGroupItem>
                     <h5><b>Game:</b></h5> {item.game}
                 </ListGroupItem>
@@ -105,10 +104,6 @@ class Home extends React.Component<
             </Card>
         )
     }
-
-    // componentWillMount() {
-    //     this.fetchPosts();
-    // }
 
     render(): React.ReactNode {
         return(

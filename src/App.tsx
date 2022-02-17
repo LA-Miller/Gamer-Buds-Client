@@ -28,6 +28,7 @@ export type AppState = {
   setEmail: (email: string) => void;
   profilePic: string;
   discord: string;
+  setDiscord: (discord: string) => void;
   clearToken: () => void;
   updateToken: (newToken: string) => void;
   setSessionToken: (sessionToken: string | null) => void;
@@ -37,6 +38,8 @@ export type AppState = {
   setRedirect: (redirect: boolean) => void;
   isAdmin: boolean;
   setIsAdmin: (isAdmin: boolean) => void;
+  adminPwd: string;
+  setAdminPwd: (adminPwd: string) => void;
   postId: number | string;
   setPostId: (postId: number | string) => void;
   game: string;
@@ -58,6 +61,7 @@ const App: React.FunctionComponent = () => {
   const [avatar, setAvatar] = useState<string>("");
   const [redirect, setRedirect] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [adminPwd, setAdminPwd] = useState<string>("");
   const [game, setGame] = useState<string>("");
   const [content, setContent] = useState<string>("");
 
@@ -75,6 +79,7 @@ const App: React.FunctionComponent = () => {
     localStorage.setItem("userId", userId.toString());
     localStorage.setItem("username", username);
     localStorage.setItem("isAdmin", isAdmin.toString());
+    localStorage.setItem("discord", discord);
   };
 
   const clearToken = () => {
@@ -127,10 +132,16 @@ const App: React.FunctionComponent = () => {
           path="/register"
           element={
             <Register
-            email={email}
-            setEmail={setEmail}
+              userId={userId}
+              setUserId={setUserId}
+              discord={discord}
+              setDiscord={setDiscord}
+              adminPwd={adminPwd}
+              setAdminPwd={setAdminPwd}
+              email={email}
+              setEmail={setEmail}
               setPassword={setPassword}
-             password={password}
+              password={password}
               username={username}
               setUsername={setUsername}
               redirect={redirect}
