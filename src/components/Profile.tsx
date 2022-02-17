@@ -85,6 +85,12 @@ class Profile extends React.Component<
       this.props.setGame(e.target.value);
     } else if (e.target.name === "content") {
       this.props.setContent(e.target.value);
+    } else if (e.target.name === "username") {
+      this.props.setUsername(e.target.value);
+    } else if (e.target.name === "email") {
+      this.props.setEmail(e.target.value);
+    } else if (e.target.name === "discord") {
+      this.props.setDiscord(e.target.value);
     }
   };
 
@@ -150,6 +156,26 @@ class Profile extends React.Component<
         Authorization: `Bearer ${this.props.sessionToken}`,
       }),
     }).then(() => this.fetchProfileInfo());
+  };
+
+  updateProfile = (userId: number | string) => {
+    fetch(`${APIURL}/user/update/profile/${userId}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        user: {
+          username: this.props.username,
+          email: this.props.email,
+          discord: this.props.discord,
+        },
+      }),
+      headers: new Headers({
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.props.sessionToken}`,
+      }),
+    })
+      .then((json) => console.log(json.json()))
+      .then(this.fetchProfileInfo)
+      .catch((err) => console.log(err));
   };
 
   componentDidMount() {
@@ -245,9 +271,52 @@ class Profile extends React.Component<
           >
             <ModalHeader>Your Profile Info</ModalHeader>
             <ModalBody>
-              <div>Username: {this.props.username}</div>
-              <div>Email: {this.props.email}</div>
-              <div>Discord: {this.props.discord}</div>
+              <ListGroup>
+                <ListGroupItem>
+                  Username:
+                  <Input
+                    onChange={this.handleChange}
+                    name="username"
+                    contentEditable={true}
+                    placeholder={this.props.username}
+                    value={this.props.username}
+                  />
+                </ListGroupItem>
+                <ListGroupItem>
+                  Email:
+                  <Input
+                    onChange={this.handleChange}
+                    name="email"
+                    contentEditable={true}
+                    placeholder={this.props.email}
+                    value={this.props.username}
+                  />
+                </ListGroupItem>
+                <ListGroupItem>
+                  Discord:
+                  <Input
+                    onChange={this.handleChange}
+                    name="discord"
+                    contentEditable={true}
+                    placeholder={this.props.discord}
+                    value={this.props.discord}
+                  />
+                </ListGroupItem>
+              </ListGroup>
+              <Button
+                style={{ backgroundColor: "green" }}
+                id="update-btn"
+                onClick={() => this.updateProfile(this.props.userId)}
+              >
+                Update Profile
+              </Button>
+              <Button
+                style={{ backgroundColor: "red" }}
+                id="update-btn"
+                onClick={this.toggleProfileEdit}
+              >
+                Cancel Changes
+              </Button>
             </ModalBody>
           </Modal>
         ) : null}
