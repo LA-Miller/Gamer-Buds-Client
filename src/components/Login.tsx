@@ -41,7 +41,7 @@ class Login extends React.Component<
   loginUser = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    fetch(`${APIURL}/user/login/test`, {
+    fetch(`${APIURL}/user/login`, {
       method: "POST",
       body: JSON.stringify({
         user: {
@@ -73,7 +73,6 @@ class Login extends React.Component<
     return (
       <div>
         <h1 className="login-h1">Login</h1>
-        <h1>Test</h1>
         <Form onSubmit={this.loginUser}>
           <FormGroup>
             <Label id="username-label" htmlFor="username">
