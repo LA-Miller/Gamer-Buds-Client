@@ -341,10 +341,12 @@ class Profile extends React.Component<
   render(): React.ReactNode {
     return (
       <div>
-        <p style={{ margin: "20px" }}>{localStorage.getItem("username")}</p>
-        <p></p>
-        <p>{this.props.discord}</p>
-        <div>{this.state.favGames.map(this.renderFavGames)}</div>
+        <p style={{ margin: "20px" }}> Username: {localStorage.getItem("username")}</p>
+        <p style={{ margin: "20px" }}>Discord: {this.props.discord}</p>
+        <div>
+          Favorite Games:
+          {this.state.favGames.map(this.renderFavGames)}
+        </div>
 
         <img src={this.props.avatar} style={{ margin: "20px" }}></img>
         <Button onClick={this.toggleFavGames}>Add Your Favorite Games</Button>

@@ -5,7 +5,7 @@ switch (window.location.hostname) {
         // APIURL = 'http://localhost:3000';
         APIURL = 'https://lam-gamer-buds-server.herokuapp.com';
         break;
-    case 'https://git.heroku.com/gamer-buds-client.git':
+    case 'gamer-buds-client.herokuapp.com/':
         APIURL = 'https://lam-gamer-buds-server.herokuapp.com'
 }
 
