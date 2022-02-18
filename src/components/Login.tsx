@@ -7,32 +7,26 @@ import APIURL from "../helpers/environment";
 export type LoginProps = {
   sessionToken: AppState["sessionToken"];
   updateToken: AppState["updateToken"];
-  setUserId: (e: number) => void;
-  setUsername: (e: string) => void;
+  password: AppState["password"];
   setPassword: (e: string) => void;
   username: AppState["username"];
-  password: AppState["password"];
+  setUsername: (e: string) => void;
   userId: AppState["userId"];
+  setUserId: (e: number) => void;
+  isAdmin: AppState["isAdmin"];
+  setIsAdmin: AppState["setIsAdmin"];
+  redirect: AppState["redirect"];
+  setRedirect: AppState["setRedirect"];
+  setIsLoggedIn: AppState["setIsLoggedIn"];
 };
 
 //                                   props    ,  state
 class Login extends React.Component<
-  LoginProps,
-  {
-    username: string;
-    password: string;
-  }
+  LoginProps, {}
 > {
   constructor(props: LoginProps) {
     super(props);
 
-    this.state = {
-      username: "",
-      password: "",
-    };
-
-    //this.handleChange = this.handleChange.bind(this);
-    //this.loginUser = this.loginUser.bind(this);
   }
 
   handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,8 +35,6 @@ class Login extends React.Component<
     } else {
       this.props.setPassword(e.target.value);
     }
-    console.log(this.props.username);
-    console.log(this.props.userId);
   };
 
   // FETCH
@@ -67,6 +59,9 @@ class Login extends React.Component<
 
         this.props.setUserId(data.user.id);
         this.props.setUsername(data.user.username);
+        this.props.setIsAdmin(data.user.isAdmin);
+        this.props.setRedirect(true);
+        this.props.setIsLoggedIn(true);
         this.props.updateToken(data.sessionToken);
       })
       .catch((error) => console.log("Error:", error));
@@ -97,6 +92,7 @@ class Login extends React.Component<
             </Label>
             <Input
               onChange={this.handleChange}
+              type="password"
               name="password"
               value={this.props.password}
               id="login-pass"

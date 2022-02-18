@@ -9,6 +9,20 @@ export type RegisterProps = {
   sessionToken: AppState["sessionToken"];
   updateToken: AppState["updateToken"];
   profilePic: AppState["profilePic"];
+  redirect: AppState["redirect"];
+  setRedirect: AppState["setRedirect"];
+  username: AppState["username"];
+  setUsername: AppState["setUsername"];
+  password: AppState["password"];
+  setPassword: AppState["setPassword"];
+  email: AppState["email"];
+  setEmail: AppState["setEmail"];
+  adminPwd: AppState["adminPwd"];
+  setAdminPwd: AppState["setAdminPwd"];
+  discord: AppState["discord"];
+  setDiscord: AppState["setDiscord"];
+  userId: AppState["userId"];
+  setUserId: AppState["setUserId"];
 };
 
 class Register extends React.Component<
@@ -46,11 +60,18 @@ class Register extends React.Component<
   }
 
   handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({
-      ...this.state,
-      [e.target.name]: e.target.value,
-    });
-    console.log(process.env.REACT_APP_ADMIN_KEY)
+    if (e.target.name === "username") {
+      this.props.setUsername(e.target.value);
+    } else if (e.target.name === "password") {
+      this.props.setPassword(e.target.value);
+    } else if (e.target.name === "email") {
+      this.props.setEmail(e.target.value);
+    } else if (e.target.name === "adminPwd") {
+      this.props.setAdminPwd(e.target.value);
+    } else if (e.target.name === "discord") {
+      this.props.setDiscord(e.target.value);
+    }
+    console.log(this.props.username);
   };
 
   //  POST
@@ -72,9 +93,9 @@ class Register extends React.Component<
         method: "POST",
         body: JSON.stringify({
           user: {
-            username: this.state.username,
-            email: this.state.email,
-            password: this.state.password,
+            username: this.props.username,
+            email: this.props.email,
+            password: this.props.password,
             isAdmin: this.AdminPasswordValidation(),
           },
         }),
@@ -85,6 +106,12 @@ class Register extends React.Component<
         .then((res) => res.json())
         .then((data) => {
           console.log("data:", data);
+          this.props.setEmail(data.user.email);
+          this.props.setDiscord(data.user.discord);
+          this.props.setPassword(data.user.password);
+          this.props.setUsername(data.user.username);
+          this.props.setUserId(data.user.id);
+          this.props.setRedirect(true);
           this.props.updateToken(data.sessionToken);
         })
         .catch((error) => console.log("Error:", error));
@@ -94,13 +121,13 @@ class Register extends React.Component<
   };
 
   AdminPasswordValidation = () => {
-    if (this.state.adminPwd.length === 0) {
+    if (this.props.adminPwd.length === 0) {
       console.log("Admin password is empty. Registering as standard user.");
       this.setState({
         isAdminFieldValid: true,
       })
       return false;
-    } else if (this.state.adminPwd != process.env.REACT_APP_ADMIN_KEY) {
+    } else if (this.props.adminPwd != process.env.REACT_APP_ADMIN_KEY) {
       console.log("Incorrect admin password! Try again or leave blank.");
       this.setState({
         adminErrMsg:
@@ -108,7 +135,7 @@ class Register extends React.Component<
         isAdminFieldValid: false,
       });
       return false;
-    } else if (this.state.adminPwd === process.env.REACT_APP_ADMIN_KEY) {
+    } else if (this.props.adminPwd === process.env.REACT_APP_ADMIN_KEY) {
       console.log("Correct admin password");
       this.setState({
         isAdminFieldValid: true,
@@ -118,7 +145,7 @@ class Register extends React.Component<
   };
 
   validate = () => {
-    if (!validEmail.test(this.state.email)) {
+    if (!validEmail.test(this.props.email)) {
       this.setState({
         emailErr: true,
       });
@@ -127,7 +154,7 @@ class Register extends React.Component<
         emailErr: false,
       });
     }
-    if (!validPassword.test(this.state.password)) {
+    if (!validPassword.test(this.props.password)) {
       this.setState({
         pwdError: true,
       });
@@ -136,7 +163,7 @@ class Register extends React.Component<
         pwdError: false,
       });
     }
-    if (this.state.username.length <= 3) {
+    if (this.props.username.length <= 3) {
       this.setState({
         usernameErr: true,
       });
@@ -173,7 +200,7 @@ class Register extends React.Component<
             <Input
               onChange={this.handleChange}
               name="email"
-              value={this.state.email}
+              value={this.props.email}
               id="register-email"
               required={true}
             />
@@ -186,7 +213,7 @@ class Register extends React.Component<
             <Input
               onChange={this.handleChange}
               name="username"
-              value={this.state.username}
+              value={this.props.username}
               id="register-username"
               required={true}
             />
@@ -195,13 +222,24 @@ class Register extends React.Component<
             <p>Username must be greater than 3 characters</p>
           )}
           <FormGroup>
+            <Label id="discord-label">
+              Discord
+            </Label>
+            <Input 
+              onChange={this.handleChange}
+              name="discord"
+              value={this.props.discord}
+              id="register-discord"
+            />
+          </FormGroup>
+          <FormGroup>
             <Label id="password-label" htmlFor="password">
               Password
             </Label>
             <Input
               onChange={this.handleChange}
               name="password"
-              value={this.state.password}
+              value={this.props.password}
               id="register-password"
               type="password"
               required={true}
@@ -233,7 +271,7 @@ class Register extends React.Component<
                   id="adminPwd-Input"
                   name="adminPwd"
                   type="password"
-                  value={this.state.adminPwd}
+                  value={this.props.adminPwd}
                 />
               </div>
             )}
