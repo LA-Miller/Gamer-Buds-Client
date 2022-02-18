@@ -46,6 +46,8 @@ export type AppState = {
   setGame: (game: string) => void;
   content: string;
   setContent: (content: string) => void;
+  title: string;
+  setTitle: (title: string) => void;
 };
 
 const App: React.FunctionComponent = () => {
@@ -64,6 +66,7 @@ const App: React.FunctionComponent = () => {
   const [adminPwd, setAdminPwd] = useState<string>("");
   const [game, setGame] = useState<string>("");
   const [content, setContent] = useState<string>("");
+  const [title, setTitle] = useState<string>("");
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -167,6 +170,8 @@ const App: React.FunctionComponent = () => {
           path="/profile"
           element={
             <Profile
+              title={title}
+              setTitle={setTitle}
               setDiscord={setDiscord}
               password={password}
               setPassword={setPassword}

@@ -20,6 +20,9 @@ import {
   ModalFooter,
   ModalHeader,
   Input,
+  Form,
+  FormGroup,
+  Label,
 } from "reactstrap";
 import { isJsxOpeningElement } from "typescript";
 
@@ -40,6 +43,8 @@ export type profileProps = {
   setEmail: AppState["setEmail"];
   password: AppState["password"];
   setPassword: AppState["setPassword"];
+  title: AppState["title"];
+  setTitle: AppState["setTitle"];
 };
 
 export type gameAPI = {
@@ -58,6 +63,12 @@ export type profileAPI = {
   discord: string;
 };
 
+export type favGameAPI = {
+  id: number;
+  title: string;
+  userId: number;
+};
+
 class Profile extends React.Component<
   profileProps,
   {
@@ -66,6 +77,8 @@ class Profile extends React.Component<
     isOpen: boolean;
     editMode: boolean;
     profileEditMode: boolean;
+    favGamesToggle: boolean;
+    favGames: [];
   }
 > {
   constructor(props: profileProps) {
@@ -74,9 +87,11 @@ class Profile extends React.Component<
     this.state = {
       postData: [],
       profileData: [],
+      favGames: [],
       isOpen: false,
       editMode: false,
       profileEditMode: false,
+      favGamesToggle: false,
     };
   }
 
@@ -91,6 +106,8 @@ class Profile extends React.Component<
       this.props.setEmail(e.target.value);
     } else if (e.target.name === "discord") {
       this.props.setDiscord(e.target.value);
+    } else if (e.target.name === "title") {
+      this.props.setTitle(e.target.value);
     }
   };
 
@@ -122,6 +139,50 @@ class Profile extends React.Component<
         console.log("postData:", this.state.postData);
       })
       .catch((error) => console.log("Error:", error));
+  };
+
+  createFavGames = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    fetch(`${APIURL}/favorites/add`, {
+      method: "POST",
+      body: JSON.stringify({
+        title: this.props.title,
+        userId: localStorage.getItem("userId"),
+      }),
+      headers: new Headers({
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        this.setState({
+          favGamesToggle: !this.state.favGamesToggle,
+        });
+        console.log(data);
+        this.getFavGames();
+      })
+      .catch((error) => console.log(error));
+  };
+
+  getFavGames = () => {
+    fetch(`${APIURL}/user/favGames/${localStorage.getItem("userId")}`, {
+      method: "GET",
+      headers: new Headers({
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        this.setState({
+          favGames: data[0].favGames,
+        });
+
+        console.log(this.state.favGames);
+        console.log("Favorite Games:", data);
+      });
   };
 
   updatePost = (postId: number) => {
@@ -180,6 +241,7 @@ class Profile extends React.Component<
 
   componentDidMount() {
     this.fetchProfileInfo();
+    this.getFavGames();
   }
 
   renderModal = (item: gameAPI, index: number) => {
@@ -240,6 +302,22 @@ class Profile extends React.Component<
     );
   };
 
+  renderFavGames = (item: favGameAPI, index: number) => {
+    return (
+      <Card
+        style={{ width: "100", height: "100", margin: "20px" }}
+        key={index}
+        className="box"
+      >
+        <ListGroup className="list-group-flush">
+          <ListGroupItem>
+            <h5>{item.title}</h5>
+          </ListGroupItem>
+        </ListGroup>
+      </Card>
+    );
+  };
+
   toggle = () => {
     this.setState({
       isOpen: !this.state.isOpen,
@@ -253,13 +331,23 @@ class Profile extends React.Component<
     });
   };
 
+  toggleFavGames = () => {
+    this.getFavGames();
+    this.setState({
+      favGamesToggle: !this.state.favGamesToggle,
+    });
+  };
+
   render(): React.ReactNode {
     return (
       <div>
         <p style={{ margin: "20px" }}>{localStorage.getItem("username")}</p>
         <p></p>
         <p>{this.props.discord}</p>
+        <div>{this.state.favGames.map(this.renderFavGames)}</div>
+
         <img src={this.props.avatar} style={{ margin: "20px" }}></img>
+        <Button onClick={this.toggleFavGames}>Add Your Favorite Games</Button>
         <Button onClick={this.toggleProfileEdit}>Edit Profile</Button>
         {this.state.profileEditMode ? (
           <Modal
@@ -320,6 +408,25 @@ class Profile extends React.Component<
               </Button>
             </ModalBody>
           </Modal>
+        ) : null}
+        {this.state.favGamesToggle ? (
+          <div>
+            <h1>Add a favorite Game</h1>
+            <Form onSubmit={this.createFavGames}>
+              <FormGroup>
+                <Label id="game-label">Game</Label>
+                <Input
+                  onChange={this.handleChange}
+                  name="title"
+                  value={this.props.title}
+                  required={true}
+                />
+              </FormGroup>
+              <Button id="post-btn" type="submit">
+                Post
+              </Button>
+            </Form>
+          </div>
         ) : null}
         {this.state.postData ? (
           <div>{this.state.postData.map(this.renderModal)}</div>
