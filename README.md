@@ -1,5 +1,7 @@
 This application was made using typescript with react. 
 
+Link to the deployed application: https://gamer-buds-client.herokuapp.com/
+
 GamerBuds is an application for people who love video games, and are looking to meet new people to play certain games with. It allows users to make posts for any game, advertising their skills that are relative to that specific game. Users contact eachother through discord, as their is no chat functionality built out yet for the app.
 
 Future plans for this app include:
