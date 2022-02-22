@@ -86,7 +86,7 @@ class NavbarComponent extends React.Component<
       <Navigate to="/" replace={true} />
     ) : (
       <Navbar>
-        <Link to="/">Home</Link>
+        <Link to="/">GamerBuds</Link>
         {this.props.sessionToken ? null : <Link to="/login">Login</Link>}
         {this.props.sessionToken ? null : <Link to="/register">Register</Link>}
         {this.props.sessionToken ? (
