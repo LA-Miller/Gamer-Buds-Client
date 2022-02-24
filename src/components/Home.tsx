@@ -108,7 +108,7 @@ class Home extends React.Component<
     render(): React.ReactNode {
         return(
             <div>
-                {this.state.data.map(this.renderCard)}
+                <div className="grid">{this.state.data.map(this.renderCard)}</div>
             </div>
         )
     } 

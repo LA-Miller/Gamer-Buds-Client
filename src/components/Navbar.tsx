@@ -67,65 +67,69 @@ class NavbarComponent extends React.Component<
     }
   };
 
-//   displayLoggedOutNavbar = () => {
-//     return (
-//       <Navbar>
-//         <Link to="/">Home</Link>
-//         <Link to="/login">Login</Link>
-//         <Link to="/register">Register</Link>
-//       </Navbar>
-//     );
-//   };
+  //   displayLoggedOutNavbar = () => {
+  //     return (
+  //       <Navbar>
+  //         <Link to="/">Home</Link>
+  //         <Link to="/login">Login</Link>
+  //         <Link to="/register">Register</Link>
+  //       </Navbar>
+  //     );
+  //   };
 
-//   componentDidUpdate() {
-//     this.displayLoggedOutNavbar();
-//   }
+  //   componentDidUpdate() {
+  //     this.displayLoggedOutNavbar();
+  //   }
 
   render(): React.ReactNode {
     return this.props.redirect ? (
       <Navigate to="/" replace={true} />
     ) : (
       <Navbar>
-        <Link to="/">GamerBuds</Link>
-        {this.props.sessionToken ? null : <Link to="/login">Login</Link>}
-        {this.props.sessionToken ? null : <Link to="/register">Register</Link>}
-        {this.props.sessionToken ? (
-          <Link to="/create">Create A Post</Link>
-        ) : null}
-        {this.props.sessionToken ? (
-          <Link to="/profile">Your Profile</Link>
-        ) : null}
-        {localStorage.getItem("isAdmin") === "true" ? (
-          <div>
-            <Input
-              type="number"
-              onChange={(e) => this.props.setUserId(e.target.value)}
-              name="userId"
-              value={this.props.userId}
-              required={true}
-            />
-            <Button onClick={this.deleteUser}>Delete User</Button>
-            <Input
-              type="number"
-              onChange={(e) => this.props.setPostId(e.target.value)}
-              name="postId"
-              value={this.props.postId}
-              required={true}
-            />
-            <Button onClick={this.deletePost}>Delete A Post</Button>
-          </div>
-        ) : null}
-        {this.props.sessionToken ? (
-          <Button
-            onClick={() => {
-              this.props.setRedirect(true);
-              this.props.setIsLoggedIn(false);
-              this.props.clearToken();
-            }}
-          >
-            Logout
-          </Button>
-        ) : null}
+          <Link to="/" id="gamerBuds">
+            GamerBuds
+          </Link>
+          {this.props.sessionToken ? null : <Link to="/login">Login</Link>}
+          {this.props.sessionToken ? null : (
+            <Link to="/register">Register</Link>
+          )}
+          {this.props.sessionToken ? (
+            <Link to="/create">Create A Post</Link>
+          ) : null}
+          {this.props.sessionToken ? (
+            <Link to="/profile">Your Profile</Link>
+          ) : null}
+          {localStorage.getItem("isAdmin") === "true" ? (
+            <div>
+              <Input
+                type="number"
+                onChange={(e) => this.props.setUserId(e.target.value)}
+                name="userId"
+                value={this.props.userId}
+                required={true}
+              />
+              <Button onClick={this.deleteUser}>Delete User</Button>
+              <Input
+                type="number"
+                onChange={(e) => this.props.setPostId(e.target.value)}
+                name="postId"
+                value={this.props.postId}
+                required={true}
+              />
+              <Button onClick={this.deletePost}>Delete A Post</Button>
+            </div>
+          ) : null}
+          {this.props.sessionToken ? (
+            <Button
+              onClick={() => {
+                this.props.setRedirect(true);
+                this.props.setIsLoggedIn(false);
+                this.props.clearToken();
+              }}
+            >
+              Logout
+            </Button>
+          ) : null}
       </Navbar>
     );
   }

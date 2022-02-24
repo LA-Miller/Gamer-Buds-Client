@@ -41,3 +41,16 @@ body {
   background-image: url('https://images.alphacoders.com/186/186993.jpg');
   color: white;
 }
+
+.nav {
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.grid {
+  min-height: 100%;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
