@@ -41,7 +41,7 @@ class Login extends React.Component<
   loginUser = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    fetch(`${APIURL}/user/login`, {
+    fetch(`${APIURL}/user/login/test`, {
       method: "POST",
       body: JSON.stringify({
         user: {
